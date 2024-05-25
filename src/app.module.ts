@@ -7,7 +7,7 @@ import { MovieModule } from './movie/movie.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: ['.env.development.local'],
+      envFilePath: ['.env'],
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
