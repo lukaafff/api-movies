@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dtos/createUser.dto';
 import { UpdateUserDto } from './dtos/updateUser.dto';
 import { hash } from 'bcrypt';
+import { UserType } from './enum/user-type.enum';
 
 @Injectable()
 export class UserService {
@@ -32,11 +33,12 @@ export class UserService {
         });
     }    
 
-    async createUser(createUserDto: CreateUserDto): Promise<{ message: string; user: UserEntity }> {
+    async createUser(createUserDto: CreateUserDto, userType?: number,): Promise<{ message: string; user: UserEntity }> {
         const saltOrRounds = 10;
         const passwordHashed = await hash(createUserDto.password, saltOrRounds);
         const newUser = this.userRepository.create({
           ...createUserDto,
+          typeUser: userType ? userType : UserType.User,
           password: passwordHashed,
         });
         const savedUser = await this.userRepository.save(newUser);

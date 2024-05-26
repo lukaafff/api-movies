@@ -72,9 +72,10 @@ export class MovieService {
         }
     }
 
-    async createMovie(createMovieDto: CreateMovieDto): Promise<{ message: string; movie: MovieEntity }> {
+    async createMovie(createMovieDto: CreateMovieDto, userId: number,): Promise<{ message: string; movie: MovieEntity }> {
         try {
             const newMovie = this.movieRepository.create(createMovieDto);
+            newMovie.user_id = userId;
             const savedMovie = await this.movieRepository.save(newMovie);
             return { message: 'Filme criado com sucesso.', movie: savedMovie };
         } catch (error) {

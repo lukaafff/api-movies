@@ -3,11 +3,15 @@ import { MovieService } from './movie.service';
 import { MovieEntity } from './entities/movie.entity';
 import { CreateMovieDto } from './dtos/createMovie.dto';
 import { UpdateMovieDto } from './dtos/updateMovie.dto';
+import { Roles } from 'src/user/decorators/roles.decorator';
+import { UserType } from 'src/user/enum/user-type.enum';
+import { UserId } from 'src/user/decorators/user-id-decorator';
 
 @Controller('movies')
 export class MovieController {
     constructor(private readonly movieService: MovieService) {}
 
+    @Roles(UserType.User)
     @Get()
     async getAllMovie(): Promise<{ message: string; movies: MovieEntity[] }> {
         const result = await this.movieService.getAllMovie();
@@ -17,6 +21,7 @@ export class MovieController {
         return { message: 'Filmes encontrados com sucesso.', movies: result.movies };
     }
 
+    @Roles(UserType.User)
     @Get('/genre/:genre')
     async getAllMovieByGenre(@Param('genre') genre: string): Promise<{ message: string; movies: MovieEntity[] }> {
         const result = await this.movieService.getAllMovieByGenre(genre);
@@ -26,6 +31,7 @@ export class MovieController {
         return { message: 'Filmes encontrados com sucesso.', movies: result.movies };
     }
 
+    @Roles(UserType.User)
     @Get('/title/:title')
     async getMovieByTitle(@Param('title') title: string): Promise<{ message: string; movies: MovieEntity[] }> {
         const result = await this.movieService.getMovieByTitle(title);
@@ -35,6 +41,7 @@ export class MovieController {
         return { message: 'Filmes encontrados com sucesso.', movies: result.movies };
     }
 
+    @Roles(UserType.User)
     @Get('/director/:director')
     async getMoviesByDirector(@Param('director') director: string): Promise<{ message: string; movies: MovieEntity[] }> {
         const result = await this.movieService.getMoviesByDirector(director);
@@ -44,6 +51,7 @@ export class MovieController {
         return { message: 'Filmes encontrados com sucesso.', movies: result.movies };
     }
 
+    @Roles(UserType.User)
     @Get('/releaseYear/:releaseYear')
     async getMoviesByReleaseYear(@Param('releaseYear') releaseYear: number): Promise<{ message: string; movies: MovieEntity[] }> {
         const result = await this.movieService.getMoviesByReleaseYear(releaseYear);
@@ -53,28 +61,33 @@ export class MovieController {
         return { message: 'Filmes encontrados com sucesso.', movies: result.movies };
     }
 
+    @Roles(UserType.User)
     @Post()
     @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-    async createMovie(@Body() createMovie: CreateMovieDto): Promise<{ message: string; movie: MovieEntity }> {
-        return this.movieService.createMovie(createMovie);
+    async createMovie(@Body() createMovie: CreateMovieDto, @UserId() userId: number): Promise<{ message: string; movie: MovieEntity }> {
+        return this.movieService.createMovie(createMovie, userId);
     }
 
+    @Roles(UserType.User)
     @Delete('/title/:title')
     async deleteMovieByTitle(@Param('title') title: string): Promise<{ message: string }> {
         return this.movieService.deleteMovieByTitle(title);
     }
 
+    @Roles(UserType.User)
     @Delete('/id/:id')
     async deleteMovieById(@Param('id') id: number): Promise<{ message: string }> {
         return this.movieService.deleteMovieById(id);
     }
 
+    @Roles(UserType.User)
     @Put('/id/:id')
     @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
     async updateMovieById(@Param('id') id: number, @Body() updateMovieDto: UpdateMovieDto): Promise<{ message: string; movie: MovieEntity }> {
         return this.movieService.updateMovieById(id, updateMovieDto);
     }
 
+    @Roles(UserType.User)
     @Put('/title/:title')
     @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
     async updateMovieByTitle(@Param('title') title: string, @Body() updateMovieDto: UpdateMovieDto): Promise<{ message: string; movie: MovieEntity }> {
