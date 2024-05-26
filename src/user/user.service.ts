@@ -4,6 +4,7 @@ import { UserEntity } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dtos/createUser.dto';
 import { UpdateUserDto } from './dtos/updateUser.dto';
+import { hash } from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -32,13 +33,14 @@ export class UserService {
     }    
 
     async createUser(createUserDto: CreateUserDto): Promise<{ message: string; user: UserEntity }> {
-        try {
-            const newUser = this.userRepository.create(createUserDto);
-            const savedUser = await this.userRepository.save(newUser);
-            return { message: 'Usuário criado com sucesso.', user: savedUser };
-        } catch (error) {
-            throw new InternalServerErrorException('Ocorreu um erro ao criar o usuário.');
-        }
+        const saltOrRounds = 10;
+        const passwordHashed = await hash(createUserDto.password, saltOrRounds);
+        const newUser = this.userRepository.create({
+          ...createUserDto,
+          password: passwordHashed,
+        });
+        const savedUser = await this.userRepository.save(newUser);
+        return { message: 'Usuário criado com sucesso.', user: savedUser };
     }
 
     async deleteUserById(id: number): Promise<{ message: string }> {
@@ -102,4 +104,12 @@ export class UserService {
             throw new InternalServerErrorException('Ocorreu um erro ao atualizar o usuário.');
         }
     }
+
+    async findUserByEmail(email: string): Promise<UserEntity | undefined> {
+        try {
+          return await this.userRepository.findOne({ where: { email } });
+        } catch (error) {
+          throw new InternalServerErrorException('Ocorreu um erro ao buscar o usuário.');
+        }
+      }
 }
