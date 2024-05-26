@@ -3,14 +3,21 @@ import { CreateUserDto } from './dtos/createUser.dto';
 import { UpdateUserDto } from './dtos/updateUser.dto';
 import { UserService } from './user.service';
 import { UserEntity } from './entities/user.entity';
+import { ReturnUserDto } from './dtos/returnUser.dto';
 
 @Controller('user')
 export class UserController {
     constructor(private readonly userService: UserService) {}
 
     @Get()
-    async getAllUser(): Promise<{ message: string; users: UserEntity[] }> {
-        return this.userService.getAllUser();
+    async getAllUser(): Promise<ReturnUserDto[]> {
+        const { users } = await this.userService.getAllUser();
+        return users.map(userEntity => new ReturnUserDto(userEntity));
+    }
+
+    @Get('/:user_id')
+    async getUserById(@Param('user_id') user_id: number): Promise<ReturnUserDto> {
+        return new ReturnUserDto (await this.userService.getUserByUsingRelations(user_id));
     }
 
     @Post()

@@ -24,4 +24,8 @@ export class CreateMovieDto {
     @IsUrl({}, { message: 'A URL da imagem é inválida.' })
     @IsNotEmpty({ message: 'A URL da imagem é obrigatória.' })
     image_url: string;
+
+    @IsInt({ message: 'O ID do usuário deve ser um número inteiro.' })
+    @IsNotEmpty({ message: 'O ID do usuário é obrigatório.' })
+    user_id: number; 
 }

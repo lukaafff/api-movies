@@ -24,6 +24,13 @@ export class UserService {
         }
     }
 
+    async getUserByUsingRelations(user_id: number): Promise<UserEntity> {
+        return this.userRepository.findOne({
+            where: { id: user_id },
+            relations: ['movies']
+        });
+    }    
+
     async createUser(createUserDto: CreateUserDto): Promise<{ message: string; user: UserEntity }> {
         try {
             const newUser = this.userRepository.create(createUserDto);

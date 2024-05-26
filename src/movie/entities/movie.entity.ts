@@ -1,9 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { UserEntity } from "src/user/entities/user.entity";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToMany, JoinTable } from "typeorm";
 
 @Entity({ name: 'movie' })
 export class MovieEntity {
     @PrimaryGeneratedColumn()
     id: number;
+
+    @Column({ name: 'user_id', nullable: false })
+    user_id: number;
 
     @Column({ name: 'title', nullable: false })
     title: string;
@@ -28,4 +32,12 @@ export class MovieEntity {
 
     @UpdateDateColumn({ name: 'updated_at' })
     updatedAt: Date;
+
+    @ManyToMany(() => UserEntity, user => user.movies)
+    @JoinTable({
+        name: "user_movies",
+        joinColumn: { name: "movie_id", referencedColumnName: "id" },
+        inverseJoinColumn: { name: "user_id", referencedColumnName: "id" }
+    })
+    user: UserEntity[];
 }
