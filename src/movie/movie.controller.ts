@@ -70,27 +70,42 @@ export class MovieController {
 
     @Roles(UserType.User)
     @Delete('/title/:title')
-    async deleteMovieByTitle(@Param('title') title: string): Promise<{ message: string }> {
-        return this.movieService.deleteMovieByTitle(title);
+    async deleteMovieByTitle(
+        @Param('title') title: string,
+        @UserId() userId: number
+    ): Promise<{ message: string }> {
+        return this.movieService.deleteMovieByTitle(title, userId);
     }
 
     @Roles(UserType.User)
     @Delete('/id/:id')
-    async deleteMovieById(@Param('id') id: number): Promise<{ message: string }> {
-        return this.movieService.deleteMovieById(id);
+    async deleteMovieById(
+        @Param('id') id: number,
+        @UserId() userId: number
+    ): Promise<{ message: string }> {
+        return this.movieService.deleteMovieById(id, userId);
     }
 
     @Roles(UserType.User)
     @Put('/id/:id')
     @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-    async updateMovieById(@Param('id') id: number, @Body() updateMovieDto: UpdateMovieDto): Promise<{ message: string; movie: MovieEntity }> {
-        return this.movieService.updateMovieById(id, updateMovieDto);
+    async updateMovieById(
+        @Param('id') id: number,
+        @Body() updateMovieDto: UpdateMovieDto,
+        @UserId() userId: number
+    ): Promise<{ message: string; movie: MovieEntity }> {
+        return this.movieService.updateMovieById(id, userId, updateMovieDto);
     }
+    
 
     @Roles(UserType.User)
     @Put('/title/:title')
     @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-    async updateMovieByTitle(@Param('title') title: string, @Body() updateMovieDto: UpdateMovieDto): Promise<{ message: string; movie: MovieEntity }> {
-        return this.movieService.updateMovieByTitle(title, updateMovieDto);
+    async updateMovieByTitle(
+        @Param('title') title: string,
+        @Body() updateMovieDto: UpdateMovieDto,
+        @UserId() userId: number
+    ): Promise<{ message: string; movie: MovieEntity }> {
+        return this.movieService.updateMovieByTitle(title, userId, updateMovieDto);
     }
 }

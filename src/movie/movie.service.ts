@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, NotFoundException, InternalServerErrorException, UnauthorizedException, ForbiddenException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { MovieEntity } from './entities/movie.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -83,67 +83,87 @@ export class MovieService {
         }
     }
 
-    async deleteMovieById(id: number): Promise<{ message: string }> {
+    async deleteMovieById(id: number, userId: number): Promise<{ message: string }> {
         try {
             const movie = await this.movieRepository.findOne({ where: { id } });
             if (!movie) {
                 throw new NotFoundException(`Filme com ID ${id} não encontrado.`);
             }
+    
+            if (movie.user_id !== userId) {
+                throw new ForbiddenException('Você não tem permissão para excluir este filme.');
+            }
+    
             await this.movieRepository.remove(movie);
             return { message: `Filme com ID ${id} excluído com sucesso.` };
         } catch (error) {
             throw new InternalServerErrorException('Ocorreu um erro ao excluir o filme.');
         }
     }
-
-    async deleteMovieByTitle(title: string): Promise<{ message: string }> {
+    
+    async deleteMovieByTitle(title: string, userId: number): Promise<{ message: string }> {
         try {
             const movie = await this.movieRepository.findOne({ where: { title } });
             if (!movie) {
                 throw new NotFoundException(`Filme com título "${title}" não encontrado.`);
             }
+    
+            if (movie.user_id !== userId) {
+                throw new ForbiddenException('Você não tem permissão para excluir este filme.');
+            }
+    
             await this.movieRepository.remove(movie);
             return { message: `Filme com título "${title}" excluído com sucesso.` };
         } catch (error) {
             throw new InternalServerErrorException('Ocorreu um erro ao excluir o filme.');
         }
-    }
+    }    
 
-    async updateMovieById(id: number, updateMovieDto: UpdateMovieDto): Promise<{ message: string; movie: MovieEntity }> {
+    async updateMovieById(id: number, userId: number, updateMovieDto: UpdateMovieDto): Promise<{ message: string; movie: MovieEntity }> {
         try {
             const movie = await this.movieRepository.findOne({ where: { id } });
             if (!movie) {
                 throw new NotFoundException(`Filme com ID ${id} não encontrado.`);
             }
-
+    
+            if (movie.user_id !== userId) {
+                throw new ForbiddenException('Você não tem permissão para editar este filme.');
+            }
+    
             movie.title = updateMovieDto.title;
             movie.director = updateMovieDto.director;
             movie.genre = updateMovieDto.genre;
             movie.release_year = updateMovieDto.releaseYear;
-
+    
             const updatedMovie = await this.movieRepository.save(movie);
             return { message: 'Filme atualizado com sucesso.', movie: updatedMovie };
         } catch (error) {
             throw new InternalServerErrorException('Ocorreu um erro ao atualizar o filme.');
         }
     }
+    
 
-    async updateMovieByTitle(title: string, updateMovieDto: UpdateMovieDto): Promise<{ message: string; movie: MovieEntity }> {
+    async updateMovieByTitle(title: string, userId: number, updateMovieDto: UpdateMovieDto): Promise<{ message: string; movie: MovieEntity }> {
         try {
             const movie = await this.movieRepository.findOne({ where: { title } });
             if (!movie) {
                 throw new NotFoundException(`Filme com título "${title}" não encontrado.`);
             }
-
+    
+            if (movie.user_id !== userId) {
+                throw new ForbiddenException('Você não tem permissão para editar este filme.');
+            }
+    
             movie.title = updateMovieDto.title;
             movie.director = updateMovieDto.director;
             movie.genre = updateMovieDto.genre;
             movie.release_year = updateMovieDto.releaseYear;
-
+    
             const updatedMovie = await this.movieRepository.save(movie);
             return { message: 'Filme atualizado com sucesso.', movie: updatedMovie }; 
         } catch (error) {
             throw new InternalServerErrorException('Ocorreu um erro ao atualizar o filme.');
         }
     }
+    
 }
