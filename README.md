@@ -39,7 +39,7 @@ OBS: Certifique de ter o docker instalado na sua máquina.
 Após iniciar a aplicação, a documentação Swagger da API estará disponível em:
 
 ```
-http://localhost:3000
+http://localhost:8080
 ```
 
 # Deploy da Imagem Docker
