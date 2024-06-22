@@ -9,15 +9,6 @@ Este projeto é uma API para gerenciamento de um catálogo de filmes, desenvolvi
 - Docker
 - PostgreSQL
 
-# Experiência
-Tenho experiência de estudo com as ferramentas utilizadas variando de 4 meses a 6 meses.
-- TypeScript - 6 meses
-- Nest.js - 6 meses
-- TypeORM - 6 meses
-- Swagger - 4 meses
-- Docker - 3 meses
-- PostgreSQL - 6 meses
-
 # Instruções para Iniciar o Projeto
 ## Clonar o Repositório
 - Primeiro, clone o repositório para a sua máquina local:
